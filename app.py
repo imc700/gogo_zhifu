@@ -21,7 +21,7 @@ go_header = {'App-Id': app_id, 'App-Sign': app_sign}
 go_url = 'https://www.gogozhifu.com/createOrder'
 notify_url = 'http://q1.afanxyz.xyz:39110/notify'
 return_url = 'http://q1.afanxyz.xyz:39110/result'
-
+final_key = 'final_key'
 
 # https://www.gogozhifu.com/shop/user/index#//way/my/index.html
 @app.route('/createOrder', methods=['GET', 'POST'])
@@ -56,10 +56,12 @@ def notify():
     reallyPrice = flask.request.json.get('reallyPrice')
     print('notify get all param: ', param, price, reallyPrice)
     print('---go to order now---')
+    # pay_result = 'heihei'
     pay_result = auto_pay(str(param))
     if pay_result is None:
         return 'order ice failed...please check your money in ice...'
-    session['final_key'] = pay_result
+    global final_key
+    final_key = pay_result
     print('---go to order close---')
     print('---notify_close---')
     if reallyPrice >= price:
@@ -74,8 +76,8 @@ def result():
     print('---result---')
     # param = flask.request.args.get('param')
     # print('result param is : ', param)
-    print('---result_close---')
-    return session.get('final_key')
+    print('---result_close---',final_key)
+    return final_key
 
 
 def sorted_img_sales(datas, page_index):
